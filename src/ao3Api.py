@@ -1,4 +1,4 @@
-import AO3, dotenv, os, json, datetime
+import AO3, dotenv, os, datetime
 
 class Api:
     def __init__(self):
