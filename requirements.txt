@@ -1,0 +1,5 @@
+google-api-python-client
+pymongo
+ao3_api
+python-dotenv
+flask

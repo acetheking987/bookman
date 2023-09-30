@@ -1,0 +1,21 @@
+services:
+    mongo:
+        image: mongo
+        volumes:
+            - data:/data/db
+        
+    bookman:
+        container_name: bookman
+        image: bookman
+        ports:
+            - 27018:27018
+        links:
+            - mongo
+        environment:
+            - GOOGLE_API_KEY=your google api key
+            - AO3_USERNAME=your ao3 username (optional)
+            - AO3_PASSWORD=your ao3 password (optional)
+            - MONGODB_URI=mongodb://mongo:27017
+            - AUTO_SAVE_QUERY=true
+volumes:
+    data:
