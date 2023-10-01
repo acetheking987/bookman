@@ -48,10 +48,10 @@ class Query:
             book["from"] = "ao3"
             return book
     
-    def query(self, title:str="", author:str="", fandoms:str="", language:str="") -> list:
-        if self.auto_save:
+    def query(self, title:str="", author:str="", fandoms:str="", language:str="", noCache:bool=False) -> list:
+        if self.auto_save and not noCache:
             db = database.Database()
-            cache = db.query_book_cache({
+            cache = db.query_book_cache_non_fuzz({
                 "title": title,
                 "author": author,
                 "fandoms": fandoms,
@@ -60,11 +60,10 @@ class Query:
             if len(cache) > 0:
                 for book in cache:
                     del book["_id"]
-                print("Found in cache")
                 return cache
         google_results = self.filterGoogleResults(self.googleSearch(title + " " + author))
         ao3_results = [self.ao3GetWorkQuick(work) for work in self.ao3Search(title=title, author=author, fandoms=fandoms, language=language)]
-        results = ao3_results + google_results
+        results = google_results + ao3_results
         if self.auto_save:
             db = database.Database()
             db.add_book_cache(results)

@@ -23,7 +23,8 @@ def search(data:dict) -> list:
     else: fandoms = data["fandoms"]
     if "language" not in data: language = ""
     else: language = data["language"]
-    return query.Query().query(title=title, author=author, fandoms=fandoms, language=language)
+    if "noCache" not in data: noCache = False
+    return query.Query().query(title=title, author=author, fandoms=fandoms, language=language, noCache=noCache)
 
 if __name__ == "__main__":
     dotenv.load_dotenv()

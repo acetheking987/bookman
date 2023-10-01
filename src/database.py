@@ -24,3 +24,12 @@ class Database:
             else:
                 query[key] = book[key]
         return list(self.db['book_cache'].find(query))
+    
+    def query_book_cache_non_fuzz(self, book: dict) -> list:
+        query = {}
+        for key in book:
+            if book[key] == "":
+                continue
+            else:
+                query[key] = book[key]
+        return list(self.db['book_cache'].find(query))
