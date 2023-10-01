@@ -13,8 +13,7 @@ services:
             - data:/data/db
         
     bookman:
-        container_name: bookman
-        image: bookman
+        image: acetheking987/bookman
         ports:
             - 27018:27018
         links:
