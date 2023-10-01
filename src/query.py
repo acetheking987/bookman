@@ -26,12 +26,15 @@ class Query:
     def filterGoogleResults(self, results:list) -> list:
         filtered = []
         for result in results:
-            filtered.append({
-                "title": result["volumeInfo"]["title"],
-                "authors": result["volumeInfo"]["authors"],
-                "id": "GOOG" + result["id"],
-                "from": "google"
-            })
+            try:
+                filtered.append({
+                    "title": result["volumeInfo"]["title"],
+                    "authors": result["volumeInfo"]["authors"],
+                    "id": "GOOG" + result["id"],
+                    "from": "google"
+                })
+            except KeyError:
+                continue
         return filtered
     
     def googleSearch(self, keyword:str) -> list:
