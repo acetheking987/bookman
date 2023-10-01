@@ -71,5 +71,8 @@ class Query:
             db = database.Database()
             db.add_book_cache(results)
         for result in results:
-            del result["_id"]
+            try:
+                del result["_id"]
+            except KeyError:
+                continue
         return results
