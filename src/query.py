@@ -72,8 +72,9 @@ class Query:
                     if "_id" in book:
                         del book["_id"]
                 return cache
-            
-        google_results = self.filterGoogleResults(self.googleSearch(title + " " + author))
+        
+        if title != "" or author != "": google_results = self.filterGoogleResults(self.googleSearch(title + " " + author))
+        else: google_results = []
         ao3_results = [self.ao3GetWorkQuick(work) for work in self.ao3Search(title=title, author=author, fandoms=fandoms, language=language)]
         results = google_results + ao3_results
 
