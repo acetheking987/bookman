@@ -16,8 +16,5 @@ services:
             - AO3_USERNAME=your ao3 username (optional)
             - AO3_PASSWORD=your ao3 password (optional)
             - MONGODB_URI=mongodb://mongo:27017
-            - AUTO_SAVE_QUERY=true
-            - CACHE_ONLY=false
-            - USE_URL_IN=true
 volumes:
     data:

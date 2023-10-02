@@ -17,6 +17,10 @@ class Query:
         return {
             "title": work.title,
             "authors": [author.username for author in work.authors],
+            "fandoms": work.fandoms,
+            "language": work.language,
+            "rating": work.rating,
+            "words": work.words,
             "id": work.id,
             "from": "ao3"
         }
@@ -28,6 +32,9 @@ class Query:
                 filtered.append({
                     "title": result["volumeInfo"]["title"],
                     "authors": result["volumeInfo"]["authors"],
+                    "pageCount": result["volumeInfo"]["pageCount"],
+                    "rating": result["volumeInfo"]["averageRating"],
+                    "language": result["volumeInfo"]["language"],
                     "id": "GOOG" + result["id"],
                     "from": "google"
                 })
@@ -45,13 +52,14 @@ class Query:
             book["from"] = "google"
             book["id"] = book_id
             return book
+        
         else:
             book = self.ao3GetWork(book_id)
             book["from"] = "ao3"
             return book
     
-    def query(self, title:str="", author:str="", fandoms:str="", language:str="", noCache:bool=False) -> list:
-        if not noCache:
+    def query(self, title:str="", author:str="", fandoms:str="", language:str="", dontSearchCache:bool=False, dontSaveCache:bool=False) -> list:
+        if not dontSearchCache:
             db = database.Database()
             cache = db.query_book_cache_non_fuzz({
                 "title": title,
@@ -64,14 +72,16 @@ class Query:
                     if "_id" in book:
                         del book["_id"]
                 return cache
-        if os.getenv('CACHE_ONLY') == "true": return []
+            
         google_results = self.filterGoogleResults(self.googleSearch(title + " " + author))
         ao3_results = [self.ao3GetWorkQuick(work) for work in self.ao3Search(title=title, author=author, fandoms=fandoms, language=language)]
         results = google_results + ao3_results
-        if os.getenv('AUTO_SAVE_QUERY') == "true":
+
+        if not dontSaveCache:
             db = database.Database()
             db.add_book_cache(results)
         for result in results:
             if "_id" in result:
                 del result["_id"]
+
         return results

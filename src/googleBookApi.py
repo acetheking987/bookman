@@ -13,6 +13,7 @@ class Api:
         try:
             request = self.service.volumes().list(source='public', q=keyword)
             response = request.execute()
+            if "items" not in response: return []
             return response["items"]
         except HttpError as err:
             return []
