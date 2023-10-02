@@ -68,7 +68,7 @@ class Query:
         google_results = self.filterGoogleResults(self.googleSearch(title + " " + author))
         ao3_results = [self.ao3GetWorkQuick(work) for work in self.ao3Search(title=title, author=author, fandoms=fandoms, language=language)]
         results = google_results + ao3_results
-        if os.getenv('AUTO_SAVE_QUERY') == "true":
+        if os.getenv('AUTO_SAVE_QUERY') == "true" and not noCache:
             db = database.Database()
             db.add_book_cache(results)
         for result in results:
