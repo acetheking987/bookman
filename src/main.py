@@ -29,6 +29,8 @@ def search(data:dict) -> list:
 
 if __name__ == "__main__":
     dotenv.load_dotenv()
+    if os.getenv('USE_URL_IN') == "true": urlIn = True
+    else: urlIn = False
     if os.getenv('AUTO_SAVE_QUERY') == "true":
         print("auto save query is enabled")
         db = database.Database()
@@ -39,18 +41,39 @@ if __name__ == "__main__":
 
     @app.route("/download", methods=["GET"])
     def download():
-        if not request.json: return {"error": "no json"}
-        return downloadAo3(request.json)
+        if urlIn:
+            if "id" not in request.args: return {"error": "id not found"}
+            return downloadAo3({"id": request.args["id"]})
+        else:
+            if not request.json: return {"error": "no json"}
+            return downloadAo3(request.json)
 
     @app.route("/get", methods=["GET"])
     def get():
-        if not request.json: return {"error": "no json"}
-        return getWork(request.json)
+        if urlIn:
+            if "id" not in request.args: return {"error": "id not found"}
+            return getWork({"id": request.args["id"]})
+        else:
+            if not request.json: return {"error": "no json"}
+            return getWork(request.json)
 
     @app.route("/search", methods=["GET"])
     def searchRoute():
-        if not request.json: return {"error": "no json"}
-        return search(request.json)
+        if urlIn:
+            if "title" not in request.args: title = ""
+            else: title = request.args["title"]
+            if "author" not in request.args: author = ""
+            else: author = request.args["author"]
+            if "fandoms" not in request.args: fandoms = ""
+            else: fandoms = request.args["fandoms"]
+            if "language" not in request.args: language = ""
+            else: language = request.args["language"]
+            if "noSearchCache" not in request.args: noCache = False
+            else: noCache = request.args["noSearchCache"]
+            return search({"title": title, "author": author, "fandoms": fandoms, "language": language, "noSearchCache": noCache})
+        else:
+            if not request.json: return {"error": "no json"}
+            return search(request.json)
 
     @app.route("/cache/size", methods=["GET"])
     def cacheSize():
