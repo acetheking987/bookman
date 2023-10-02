@@ -33,3 +33,7 @@ class Database:
             else:
                 query[key] = book[key]
         return list(self.db['book_cache'].find(query))
+    
+    def query_book_cache_by_clear(self) -> bool:
+        self.db['book_cache'].delete_many({})
+        return True

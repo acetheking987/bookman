@@ -34,22 +34,34 @@ if __name__ == "__main__":
         db = database.Database()
         cache = db.query_book_cache({})
         print(f"cache size: {len(cache)}")
-        
+
     app = Flask(__name__)
 
     @app.route("/download", methods=["GET"])
     def download():
         if not request.json: return {"error": "no json"}
         return downloadAo3(request.json)
-    
+
     @app.route("/get", methods=["GET"])
     def get():
         if not request.json: return {"error": "no json"}
         return getWork(request.json)
-    
+
     @app.route("/search", methods=["GET"])
     def searchRoute():
         if not request.json: return {"error": "no json"}
         return search(request.json)
-    
+
+    @app.route("/cache/size", methods=["GET"])
+    def cacheSize():
+        db = database.Database()
+        cache = db.query_book_cache({})
+        return {"size": len(cache)}
+
+    @app.route("/cache/clear", methods=["DELETE"])
+    def cacheClear():
+        db = database.Database()
+        db.query_book_cache_by_clear()
+        return {"success": True}
+        
     app.run(host="0.0.0.0", port=27018)

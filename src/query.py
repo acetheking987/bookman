@@ -3,8 +3,6 @@ import ao3Api, googleBookApi, dotenv, os, database
 class Query:
     def __init__(self) -> None:
         dotenv.load_dotenv()
-        if os.getenv('AUTO_SAVE_QUERY') == "true":
-            self.auto_save = True
         self.ao3 = ao3Api.Api()
         self.google = googleBookApi.Api()
 
@@ -34,7 +32,8 @@ class Query:
                     "from": "google"
                 })
             except KeyError:
-                continue
+                continue # this has only happened once errored once and I forgot what specificly caused it so i put this here to blanket fix it for now. 
+                         # If someone can reproduce this (the key error with "result["volumeInfo"]["authors"]") error please open an issue on github
         return filtered
     
     def googleSearch(self, keyword:str) -> list:
@@ -52,7 +51,7 @@ class Query:
             return book
     
     def query(self, title:str="", author:str="", fandoms:str="", language:str="", noCache:bool=False) -> list:
-        if self.auto_save and not noCache:
+        if not noCache:
             db = database.Database()
             cache = db.query_book_cache_non_fuzz({
                 "title": title,
@@ -62,17 +61,17 @@ class Query:
             })
             if len(cache) > 0:
                 for book in cache:
-                    del book["_id"]
+                    if "_id" in book:
+                        del book["_id"]
                 return cache
+        if os.getenv('CACHE_ONLY') == "true": return []
         google_results = self.filterGoogleResults(self.googleSearch(title + " " + author))
         ao3_results = [self.ao3GetWorkQuick(work) for work in self.ao3Search(title=title, author=author, fandoms=fandoms, language=language)]
         results = google_results + ao3_results
-        if self.auto_save:
+        if os.getenv('AUTO_SAVE_QUERY') == "true":
             db = database.Database()
             db.add_book_cache(results)
         for result in results:
-            try:
+            if "_id" in result:
                 del result["_id"]
-            except KeyError:
-                continue
         return results
