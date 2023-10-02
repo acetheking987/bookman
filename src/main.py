@@ -44,6 +44,7 @@ if __name__ == "__main__":
         if urlIn:
             if "id" not in request.args: return {"error": "id not found"}
             if "format" not in request.args: ftype = "PDF"
+            else: ftype = request.args["format"]
             return downloadAo3({"id": request.args["id"], "format": ftype})
         else:
             if not request.json: return {"error": "no json"}
