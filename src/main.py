@@ -23,7 +23,7 @@ def search(data:dict) -> list:
     else: fandoms = data["fandoms"]
     if "language" not in data: language = ""
     else: language = data["language"]
-    if "noCache" not in data: noCache = False
+    if "noSearchCache" not in data: noCache = False
     else: noCache = data["noCache"]
     return query.Query().query(title=title, author=author, fandoms=fandoms, language=language, noCache=noCache)
 
